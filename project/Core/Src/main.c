@@ -90,10 +90,8 @@ int _write(int file, char *ptr, int len)
   */
 void Custom_USART2_RxCallback(void)
 {
-	uint8_t rx_data = LL_USART_ReadReg(USART2, RDR);
-	if (ring_buffer_put(&ring_buffer_uart_rx, rx_data) == 0) {
-		printf("Rx buffer is full\r\n");
-	}
+	uint8_t rx_data = LL_USART_ReceiveData8(USART2);
+	ring_buffer_put(&ring_buffer_uart_rx, rx_data);
 }
 
 /**
@@ -160,7 +158,7 @@ int main(void)
   MX_USART2_UART_Init();
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
-  ring_buffer_init(&ring_buffer_uart_rx, rx_buffer, 4);
+  ring_buffer_init(&ring_buffer_uart_rx, rx_buffer, 16);
   ring_buffer_init(&ring_buffer_keypad, keypad_buffer, 5);
 
   //HAL_UART_Receive_IT(&huart2, &rx_data, 1);
